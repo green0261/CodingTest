@@ -1,0 +1,159 @@
+import java.util.*;
+import java.io.*;
+
+public class Main {
+    static ArrayList<Integer> order = new ArrayList<>(); //가로등 설치 순서
+    static TreeSet<Integer> positions = new TreeSet<>(); //가로등 위치 오름차순
+    static PriorityQueue<Gap> pq = new PriorityQueue<>(); //가로등 간 거리 내림차순
+    static final int START_POS = 1;                       //N 시작 위치
+    static final int MULTIPLIER = 2;                      //r*2를 구하기 위한 곱하는 수
+    static int N, M;                                      //N:마을 거리, M:초기 가로등 개수
+
+    public static void main(String[] args) throws IOException{
+
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+            //명령어 개수
+            int commandNum = Integer.parseInt(br.readLine());
+            StringTokenizer st = new StringTokenizer(br.readLine());
+
+            st.nextToken(); //명령어 100
+            N = Integer.parseInt(st.nextToken()); //마을 크기
+            M = Integer.parseInt(st.nextToken()); //가로등 개수
+
+            //가로등 데이터 세팅
+            for(int i = 0 ; i < M ; i++){
+                int pos = Integer.parseInt(st.nextToken());
+                addLightData(pos);
+            }
+
+            //가로등 거리 세팅
+            int prev = positions.first();
+            for(int curr : positions){
+                pq.add(new Gap(prev,curr));
+                prev = curr;
+            }
+
+            //명령 수행
+            for(int i = 0 ; i < commandNum - 1 ; i++){
+                StringTokenizer st2 = new StringTokenizer(br.readLine());
+                int command = Integer.parseInt(st2.nextToken());
+                switch(command){
+                    case 200 :
+                        addLight();
+                        break;
+                    case 400 :
+                        calculateR();
+                        break;
+                    default :
+                        int removeNum = Integer.parseInt(st2.nextToken());
+                        removeLight(removeNum);
+                }
+            }
+        
+    }
+
+    //가로등 번호 및 위치 데이터 추가
+    public static void addLightData(int pos){
+        positions.add(pos);
+        order.add(pos);
+    }
+
+    //새로운 가로등 추가
+    public static void addLight(){
+        //가로등 간 가장 먼 거리 가져오기
+        Gap gap = getMaxGap();
+
+        //가로등을 새로 설치할 위치
+        int newPos = (gap.left + gap.right + 1)/2;
+        
+        //가로등 위치 및 순서 데이터 추가
+        addLightData(newPos);
+        
+        //새로운 거리 등록
+        Integer higher = positions.higher(newPos);
+        Integer lower = positions.lower(newPos);
+
+        if(lower != null) pq.add(new Gap(lower, newPos));
+        if(higher != null) pq.add(new Gap(newPos, higher));
+
+    }  
+
+    //가로등 제거
+    public static void removeLight(int removeNum){
+
+        if (removeNum > order.size()) return;
+        
+        //제거할 가로등 번호 가져오기
+        int lightNum = order.get(removeNum-1);
+
+        Integer lower = positions.lower(lightNum);
+        Integer higher = positions.higher(lightNum);
+
+        if(lower != null && higher != null){
+            pq.add(new Gap(lower, higher));
+        }
+
+        //가로등 제거
+        positions.remove(lightNum);
+
+    }
+
+    //최소 소비 전력 R에 곱하기 2한 값 구하기
+    public static void calculateR(){
+        if(positions.isEmpty()) return;
+
+        //양 끝단 max r*2값
+        int edgeMaxDist = Math.max(positions.first() - START_POS, N - positions.last()) * MULTIPLIER;
+
+        //가로등 간 max r*2값
+        Gap gap = getMaxGap();
+        int lightDist = gap != null ? gap.dist : 0;
+
+        //max 값 출력
+        System.out.println(Math.max(lightDist, edgeMaxDist));
+
+    }
+
+    //가로등 간 가장 먼 거리 반환
+    public static Gap getMaxGap(){
+        Gap gap = null;
+        //데이터가 존재하면 반복
+        while(!pq.isEmpty()){
+            //max 데이터 가져오기
+            gap = pq.peek();
+            Integer higher = positions.higher(gap.left);
+
+            //유효성 검사()
+            if(positions.contains(gap.left) && higher != null && higher == gap.right){
+                return gap;
+            }
+            //제거
+            pq.poll();
+        }
+        return null;
+    }
+}
+
+//양쪽 가로등 위치와 그 사이 거리를 저장하기 위한 Gap 클래스
+class Gap implements Comparable<Gap> {
+    int dist; // 두 가로등 사이의 거리 (R - L)
+    int left; // 왼쪽 가로등의 좌표
+    int right; // 오른쪽 가로등의 좌표
+
+    public Gap(int left, int right) {
+        this.left = left;
+        this.right = right;
+        this.dist = right - left;
+    }
+
+    @Override
+    public int compareTo(Gap other) {
+        // 1. 거리가 큰 것이 우선순위가 높음
+        if (this.dist != other.dist) {
+            return other.dist - this.dist; 
+        }
+        // 2. 거리가 같다면 왼쪽 좌표가 작은 것이 우선순위가 높음 (문제 조건)
+        return this.left - other.left;
+    }
+}
