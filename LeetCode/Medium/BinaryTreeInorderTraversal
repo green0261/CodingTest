@@ -1,0 +1,36 @@
+class Solution {
+    public List<List<Integer>> combinationSum(int[] candidates, int target) {
+        List<List<Integer>> list = new ArrayList<>();
+
+        for(int i = 0 ; i < candidates.length ; i++){
+            test(candidates, i, target, new Stack<Integer>(), list);
+        }
+        
+        return list;
+    }
+
+    public void test(int[] nums, int idx, int left, Stack<Integer> stack, List<List<Integer>> list){
+        
+        int n = nums[idx];
+        left = left - n;
+
+        if(left == 0){
+            stack.add(n);
+            list.add(new ArrayList(stack));
+        }else if(left < 0){
+            return;
+        }else if(left > 0){
+            stack.add(n);
+            test(nums,idx,left, stack, list);
+        }
+
+        for(int i = idx+1 ; i < nums.length ; i++){
+            test(nums, i, left, stack, list);
+        }
+
+        if(!stack.empty()){
+            stack.pop();
+        }
+        
+    }
+}
