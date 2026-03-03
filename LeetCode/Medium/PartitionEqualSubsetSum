@@ -1,0 +1,33 @@
+class Solution {
+    public boolean canPartition(int[] nums) {
+        int sum = 0;
+        for(int num : nums) sum += num;
+
+        //원소 총 합이 홀수인 경우 동일하게 나눌 수 없음
+        if(sum % 2 != 0) return false;
+
+        //찾아야 하는 합계
+        int target = sum / 2;
+
+        //dp[n] : 합해서 n을 만들 수 있는지 여부
+        boolean[] dp = new boolean[target + 1];
+
+        //dp[0]은 항상 true
+        dp[0] = true;
+
+      for(int i = 0 ; i < nums.length ; i++){
+        int num = nums[i];
+
+        //target부터 num까지 반복
+        for(int j = target ; j >= num ; j--){
+
+            //dp[현재 값 - num]이 true라면
+            if(dp[j - num]){
+                dp[j] = true; //true 대입
+            }
+        }
+      }
+        
+        return dp[target];
+    }
+}
