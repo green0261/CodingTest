@@ -3,10 +3,7 @@ class Solution {
         //반환할 배열(0,...,n)
         int[] dp = new int[n + 1];
 
-        //1. n이 0인 경우 배열 {0} 바로 리턴
-        if(n == 0) return arr;
-
-        //2. dp[1] 부터 dp[n]까지 값 채우기
+        //1. dp[1] 부터 dp[n]까지 값 채우기
         for(int i = 1 ; i <= n ; i++){
            if((i & 1) == 0){ //i가 짝수인 경우
                 // i/2과 1개수 동일
@@ -19,7 +16,7 @@ class Solution {
 
         }
 
-        //3. dp[0] 부터 dp[n] 까지의 값 반환
+        //2. dp[0] 부터 dp[n] 까지의 값 반환
         return dp;
     }
 }
