@@ -1,0 +1,29 @@
+class Solution {
+    public int coinChange(int[] coins, int amount) {
+        //1. dp배열 생성(나올 수 있는 max값 +1로 초기화)
+        int max = amount + 1;
+        int[] dp = new int[amount+1];
+        Arrays.fill(dp,max);
+
+        //초기값
+        dp[0] = 0;
+
+        //2. 효율성을 위해 동전 오름차순 정렬
+        Arrays.sort(coins);
+
+
+        //3. dp[1] 부터 값 채우기
+        for(int i = 1 ; i <= amount ; i++){
+            for(int coin : coins){
+                //현재 목표 금액(i)보다 동전 금액이 더 크면 확인할 필요X
+                if(i < coin) break;
+
+                //현재 dp[i] 값과 dp[i-coin]+1 중 더 작은 값을 대입
+                dp[i] = Math.min(dp[i], dp[i-coin]+1);
+            }
+        }
+
+        //4. dp[amount] 가 초기값 그대로라면 amount를 만들 수 없는 경우이므로 -1 반환
+        return dp[amount] == max ? -1 : dp[amount];
+    }
+}
