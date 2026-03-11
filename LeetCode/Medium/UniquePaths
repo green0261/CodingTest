@@ -1,0 +1,23 @@
+class Solution {
+    public int uniquePaths(int m, int n) {
+        //dp[0][0] ~ dp[m-1][n-1] : 해당 위치에 도달할 수 있는 경로 개수
+        int[][] dp = new int[m][n];
+
+        //시작점 경로 개수 1로 설정
+        dp[0][0] = 1;
+        
+        //목표지점부터 역으로 내려가며 계산 시작
+        return calcPath(m-1,n-1, dp);
+    }
+    
+    public int calcPath(int i, int j, int[][] dp){
+        // grid 범위를 벗어나면 없는 경로이므로 0 반환   
+        if(i < 0 || j < 0) return 0;
+        //이미 계산된 값이 있으면 해당 값 리턴
+        if(dp[i][j] != 0) return dp[i][j];
+
+        //필요한 하위 문제 답을 구하여 dp[i][j] 채우고 결과를 반환
+        return dp[i][j] = calcPath(i-1, j, dp) + calcPath(i, j-1, dp);
+    }
+
+}
