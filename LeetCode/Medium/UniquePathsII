@@ -1,0 +1,25 @@
+class Solution {
+    public int uniquePathsWithObstacles(int[][] obstacleGrid) {
+        //dp[j] : dp[][j] 좌표까지의 경로 수
+        int[] dp = new int[obstacleGrid[0].length];
+
+        //초기값 설정 (dp[0][0] = 1)
+        dp[0] = 1;
+
+        //한 행씩 반복 (grid[0] -> gird[1] -> grid[2])
+        for(int i = 0 ; i < obstacleGrid.length ; i++){
+
+            //왼쪽 -> 오른쪽 좌표 순 계산
+            for(int j = 0 ; j < dp.length ; j++){
+                if(obstacleGrid[i][j] == 1){ //장애물인 경우 경로 0개
+                    dp[j] = 0;               
+                }else if(j > 0){             //j 좌표값이 0이 아니면서 지날 수 있는 좌표인 경우
+                    dp[j] += dp[j-1];        //왼쪽 좌표 값 + 위쪽 좌표값
+                }
+            }
+        }
+
+        //목표값 반환
+        return dp[dp.length-1];
+    }
+}
