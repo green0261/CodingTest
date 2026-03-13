@@ -1,0 +1,28 @@
+class Solution {
+    public void setZeroes(int[][] matrix) {
+
+        // 0이 있는 행과 열 저장(false:0없음, true:0있음)
+        boolean[] zeroRows = new boolean[matrix.length];
+        boolean[] zeroCols = new boolean[matrix[0].length];
+
+        // 2. 값이 0인 인덱스
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[0].length; j++) {
+                if (matrix[i][j] == 0) { //값이 0이면 해당 행,열을 true로 표시
+                    zeroRows[i] = true;
+                    zeroCols[j] = true;
+                }
+            }
+        }
+
+        //저장 데이터를 확인하여 해당 행, 열 값 변경
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[0].length; j++) {
+                //해당하는 행, 열이 하나라도 0이면 0으로 값 변경
+                if (zeroRows[i] || zeroCols[j]) {
+                    matrix[i][j] = 0;
+                }
+            }
+        }
+    }
+}
