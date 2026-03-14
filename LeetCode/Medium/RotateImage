@@ -1,0 +1,24 @@
+class Solution {
+    public void rotate(int[][] matrix) {
+        int n = matrix.length;
+
+        //대칭축 기준으로 값 교환(transpose)
+        for(int i = 1 ; i < n ; i++){
+            for(int j = 0 ; j < i ; j++){
+                int temp = matrix[i][j];
+                matrix[i][j] = matrix[j][i];
+                matrix[j][i] = temp;
+            }
+        }
+
+        //각 행 reverse
+        for(int[] row : matrix){
+            //행 크기의 절반만큼 반복하며 양 끝 원소 교환
+            for(int i = 0 ; i < (n/2) ; i++){ //ex) arr=[1,2,3] -> 0번째 인덱스 한 개만 교환
+                int temp = arr[i];
+                row[i] = row[(n-1)-i];
+                row[(n-1)-i] = temp;
+            }
+        }
+    }
+}
