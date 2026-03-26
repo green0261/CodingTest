@@ -1,0 +1,16 @@
+class Solution {
+    public int findTargetSumWays(int[] nums, int target) {
+        return findTarget(nums, 0, 0, target);
+    }
+
+    private int findTarget(int[] nums, int idx, int sum, int target) {
+        if (idx == nums.length) {
+            return sum == target ? 1 : 0;
+        }
+
+        int plus = findTarget(nums, idx + 1, sum + nums[idx], target);
+        int minus = findTarget(nums, idx + 1, sum - nums[idx], target);
+
+        return plus + minus;
+    }
+}
