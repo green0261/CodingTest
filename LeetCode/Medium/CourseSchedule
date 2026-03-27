@@ -1,0 +1,53 @@
+class Solution {
+    public boolean canFinish(int numCourses, int[][] prerequisites) {
+        
+        Map<Integer,List<Integer>> map = new HashMap<>();
+
+        //1. 데이터 세팅(key:후행과목, value:선행과목)
+        for(int i = 0; i < numCourses; i++){
+            map.put(i,new ArrayList<>());
+        }
+        
+        for(int[] pre : prerequisites){
+            map.get(pre[0]).add(pre[1]); 
+        }
+        
+        //노드 상태 저장 배열(0 = 탐색X, 1 = 탐색중, 2 = 탐색완료)
+        int[] state = new int[numCourses];
+        
+        //0번 과목부터 탐색 시작
+        for(int i = 0; i < numCourses; i++){
+            if(!findCycle(map, i, state)){
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    
+    private boolean findCycle(Map<Integer,List<Integer>> map, int idx, int[] state){
+        // 현재 탐색 중인 노드인 경우 -> cycle이 존재하므로 false
+        if(state[idx] == 1){
+            return false;
+        }
+        
+        // 이미 완료된 노드인 경우 패스
+        if(state[idx] == 2){
+            return true;
+        }
+        
+        state[idx] = 1;
+        
+        // 현재 과목의 선수과목 탐색
+        for(int i : map.get(idx)){
+            if(!findCycle(map, i, state)){
+                return false;
+            }
+        }
+        
+        // 탐색 완료
+        state[idx] = 2;
+
+        return true;
+    }
+}
